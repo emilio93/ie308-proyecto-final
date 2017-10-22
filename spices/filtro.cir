@@ -1,0 +1,54 @@
+Filtro state-variable con tl074
+
+.include lib/tl074.cir
+
+* distintas frecuencias para simular ruido
+.param freqlp=200 T=1/freq phi=-T/4
+.param freq=2000 T=1/freq phi=-T/4
+.param freqhp=15000 T=1/freq phi=-T/4
+
+* Fuentes dc de +-9 V
+* vss positivo
+vssp vssp gnd dc 9
+* vss negativo
+vssm gnd vssn dc 9
+
+* Señal
+vin vin vinlp dc 0 ac 1 sin(0 100m {freq} 0 0)
+vinlp vinlp vinhp dc 0 ac 1 sin(0 100m {freqlp} 0 0)
+vinhp vinhp gnd dc 0 ac 1 sin(0 100m {freqhp} 0 0)
+
+* TL074  nii1  ii1  vssp vssn vo1 TL074
+XTL074hp niihp iihp vssp vssn vhp TL074
+XTL074bp gnd   iibp vssp vssn vbp TL074
+XTL074lp gnd   iilp vssp vssn vlp TL074
+
+r1 vin niihp 2.4k
+r2 niihp vbp 2.4k
+r3 iihp vhp 2.4k
+r4 iihp vlp 2.4k
+
+r5 vhp iibp 2.4k
+r6 vbp iilp 2.4k
+
+c1 iibp vbp 33n
+c2 iilp vlp 33n
+
+rslp vlp ii4 2.4k
+rsbp vbp ii4 2.4k
+rshp vhp ii4 2.4k
+
+rsp vap ii4 2.4k
+XTL0744 gnd ii4 vssp vssn vap TL074
+
+.control
+  run
+    tran 10u 1002m 1000m
+    plot v(vin) v(vlp) v(vbp) v(vhp) v(vap)
+    gnuplot plots/filtro v(vlp) v(vbp) v(vhp) v(vap)
+
+    ac DEC 100 10 30k
+    plot db(v(vlp)) db(v(vbp)) db(v(vhp)) db(v(vap))
+    gnuplot plots/filtro-mag db(v(vlp)) db(v(vbp)) db(v(vhp))
+.endc
+.end
