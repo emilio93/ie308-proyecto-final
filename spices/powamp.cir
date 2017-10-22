@@ -1,0 +1,59 @@
+Amplificador de Potencia
+
+.include lib/lm386.cir
+
+.param freq=2k T=1/freq phi=-T/4
+
+vs vs gnd dc 9
+vin vin gnd dc 0 ac 1 sin(0 80m {freq} 0 0)
+
+* No es necesario acá por tratarse de una fuente VDC ideal
+* Se utiliza por completitud
+cnoise vs gnd 220u
+
+Xlm386 g1 gnd input gnd out vs byp  g8 LM386
+
+* Potenciometro de 10k
+rp1 vin input 0
+rp2 input gnd 10k
+
+* Capacitor bypass(patilla 7 del LM386)
+cby byp gnd 10u
+
+* Ganancia de 50 hasta ~~80mV de entrada a 9VDC
+r1 g1 g1g8 1.2k
+c1 g1g8 g8 10u
+
+* Ganancia de 200 hasta ~~15mV de entrada a 9VDC
+* c1 g1 g8 10u
+
+* Filtro de salida
+ro out roco 10
+co1 roco gnd 47n
+
+* Bass Boost
+* Cbb out bb 33n
+* Rbb bb g1 10k
+
+* salida del circuito a traves de un capacitor de 220uF
+co2 out vl 500u
+
+* Se utiliza un paralante de 16 Ohms
+rl vl gnd 4
+
+.control
+  run
+    tran 3u 103.33m 100m
+      plot v(vin) v(vl)
+      gnuplot plots/powamp v(vin) v(vl)
+
+
+    ac DEC 100 1  1Meg
+      plot db(v(vl))
+      gnuplot plots/mag-powamp db(vm(vl))
+
+    *ac DEC 100 20  20k
+    *  plot db(vm(vl))
+    *  gnuplot plots/mag-powamp-bb db(vm(vl))
+.endc
+.end

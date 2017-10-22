@@ -1,0 +1,46 @@
+Fuente de tension de 9V
+
+.include lib/1n4001.cir
+.include lib/1n4002.cir
+.include lib/lm317.cir
+
+* distintas frecuencias para simular ruido
+.param freq=120 T=1/freq phi=-T/4
+.param freq2=250 T=1/freq phi=-T/4
+.param freq3=584 T=1/freq phi=-T/4
+.param freq4=1693 T=1/freq phi=-T/4
+
+* Fuente dc de 12 V
+vs vs1 gnd dc 12
+
+* añadir frecuencias para simular ruido
+vnoise1 vs1 vs2 dc 0 sin(0 80m {freq} 0 0 )
+vnoise2 vs2 vs3 dc 0 sin(0 350m {freq2} 0 0 )
+vnoise3 vs3 vs4 dc 0 sin(0 100m {freq3} 0 0 )
+vnoise4 vs4 vs dc 0 sin(0 97m {freq4} 0 0 )
+
+Xlm317 vs    vout  adj       LM317
+* Resistencias ajustan la tensión de salida
+R1     vout  adj   240
+R2     adj   gnd   1500
+
+* Filtros de ruido
+Ci     vs    gnd   100n
+Cadj   adj   gnd   10u
+Co     vout  gnd   47u
+
+* Protecciones del regulador
+D1     vout  vs    D1n4002rl
+D2     adj   vout  D1n4002rl
+
+.control
+  run
+    tran 5u 200m 100m
+    plot v(vout) v(vs)
+    gnuplot plots/fuente v(vout) v(vs)
+
+    tran 5u 130m 100m
+    plot v(vout)
+    gnuplot plots/fuente-ruido v(vout)
+.endc
+.end
