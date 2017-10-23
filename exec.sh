@@ -1,6 +1,7 @@
 mkdir -p plots
 
 mkdir -p pdfs
+mkdir -p img
 for archivo in ./spices/*.cir; do
   archivo="${archivo/.cir/}"
   echo  "ngspice -b ${archivo}.cir"
@@ -20,6 +21,8 @@ for plot in ./plots/*.plt; do
   sed -i "s/set terminal postscript eps color/set terminal pdf/g" "${name}.plt"
   sed -i "s/set title .*/set title \"\"/g"                        "${name}.plt"
   sed -i "s/set out 'plots/set out 'pdfs/g"                       "${name}.plt"
+  
+  sed -i 's/#set y2tics 1/set key top rmargin/g'  "${name}.plt"
 
   sed -i "s/v(2)/Vin/g"    "${name}.plt"
   sed -i "s/v(4)/Vout/g"   "${name}.plt"
@@ -39,7 +42,9 @@ for plot in ./plots/*.plt; do
 
   gnuplot "${name}.plt" > /dev/null
   inkscape "pdfs/${single}.eps" --export-pdf "pdfs/${single}.pdf"
+  inkscape "pdfs/${single}.eps" --export-plain-svg "img/${single}.svg" --export-width=1024
 
   gnuplot "${name}.plt" > /dev/null
   inkscape "pdfs/${single}.eps" --export-pdf "pdfs/${single}.pdf"
+  inkscape "pdfs/${single}.eps" --export-plain-svg "img/${single}.svg" --export-width=1024
 done
