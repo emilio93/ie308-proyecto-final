@@ -39,7 +39,7 @@ co1 roco gnd 47n
 co2 out vl 220u
 
 * Se utiliza un paralante de 16 Ohms
-rl vl gnd 4
+rl vl gnd 16
 
 .control
   run
