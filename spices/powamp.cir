@@ -36,7 +36,7 @@ co1 roco gnd 47n
 * Rbb bb g1 10k
 
 * salida del circuito a traves de un capacitor de 220uF
-co2 out vl 500u
+co2 out vl 220u
 
 * Se utiliza un paralante de 16 Ohms
 rl vl gnd 4
