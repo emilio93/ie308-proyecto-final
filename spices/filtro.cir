@@ -45,10 +45,10 @@ XTL0744 gnd ii4 vssp vssn vap TL074
   run
     tran 10u 1002m 1000m
     plot v(vin) v(vlp) v(vbp) v(vhp) v(vap)
-    gnuplot plots/filtro v(vlp) v(vbp) v(vhp) v(vap)
+    gnuplot plots/filtro v(vin) v(vlp) v(vbp) v(vhp) v(vap)
 
     ac DEC 100 10 30k
     plot db(v(vlp)) db(v(vbp)) db(v(vhp)) db(v(vap))
-    gnuplot plots/filtro-mag db(v(vlp)) db(v(vbp)) db(v(vhp))
+    gnuplot plots/filtro-mag db(v(vlp)) db(v(vbp)) db(v(vhp)) db(v(vap))
 .endc
 .end
